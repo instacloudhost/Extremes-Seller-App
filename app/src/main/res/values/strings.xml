@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Extremes</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="empty"></string>
+    <string name="title_activity_login">Sign in</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="share_title">
+        Extreme Manpower (P) Limited
+        "\n"Click the Link Bellow to download Extreme Sales Service App
+        "\n"https://extremes.in/download/app</string>
+</resources>

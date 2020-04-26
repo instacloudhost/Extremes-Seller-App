@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/startService"
+        android:title="Start"
+        android:icon="@drawable/ic_start_track"
+        />
+    <item
+        android:id="@+id/stopService"
+        android:title="Stop"
+        android:icon="@drawable/ic_stop_track"/>
+</menu>

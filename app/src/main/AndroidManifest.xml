@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.instacloudhost.extremes">
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
+    <application android:theme="@style/AppTheme" android:label="@string/app_name" android:icon="@drawable/ic_launcher" android:debuggable="true" android:testOnly="true" android:allowBackup="true" android:logo="@drawable/ic_launcher" android:supportsRtl="true" android:usesCleartextTraffic="true" android:roundIcon="@mipmap/ic_launcher_round" android:appComponentFactory="androidx.core.app.CoreComponentFactory">
+        <activity android:label="Notifications" android:name="com.instacloudhost.extremes.Notification" android:screenOrientation="portrait" android:parentActivityName="com.instacloudhost.extremes.DashBoard"/>
+        <activity android:label="Support" android:name="com.instacloudhost.extremes.Support" android:screenOrientation="portrait" android:parentActivityName="com.instacloudhost.extremes.DashBoard"/>
+        <activity android:label="FeedBack" android:name="com.instacloudhost.extremes.FeedBack" android:screenOrientation="portrait" android:parentActivityName="com.instacloudhost.extremes.DashBoard"/>
+        <activity android:label="About Extreme" android:name="com.instacloudhost.extremes.AboutUs" android:screenOrientation="portrait" android:parentActivityName="com.instacloudhost.extremes.DashBoard"/>
+        <activity android:label="Add Customers" android:name="com.instacloudhost.extremes.AddCustomer" android:screenOrientation="portrait" android:parentActivityName="com.instacloudhost.extremes.DashBoard"/>
+        <activity android:label="View Customers" android:name="com.instacloudhost.extremes.ViewCustomer" android:screenOrientation="portrait" android:parentActivityName="com.instacloudhost.extremes.DashBoard"/>
+        <activity android:theme="@style/AppTheme.NoActionBar" android:label="@string/app_name" android:name="com.instacloudhost.extremes.DashBoard" android:screenOrientation="portrait"/>
+        <activity android:theme="@style/AppTheme.NoActionBar" android:name="com.instacloudhost.extremes.MainActivity" android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <service android:name="com.instacloudhost.extremes.foreground.Tracking" android:enabled="true" android:exported="false"/>
+
+    </application>
+
+</manifest>
