@@ -23,8 +23,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,12 +46,10 @@ public class DashBoard extends AppCompatActivity {
 
     private SharedPreferences token;
     private String extremes = "extremeStorage";
-    private BroadcastReceiver broadcastReceiver;
-    private TextView code;
     public Tracking gpsService;
-    private AppBarConfiguration mAppBarConfiguration;
     DrawerLayout drawerLayout;
     Toolbar toolbar;
+    private String tokenid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,14 +58,36 @@ public class DashBoard extends AppCompatActivity {
 
         token = getSharedPreferences(extremes,
                 Context.MODE_PRIVATE);
-
+        tokenid = token.getString("token", "");
+        Log.d("uid: ", tokenid);
         menu();
-        getGraph(token.getString("token", ""));
+
+        checkAllState();
 
         final Intent intent = new Intent(this.getApplication(), Tracking.class);
         this.getApplication().startService(intent);
         this.getApplication().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
+    }
+
+    private void checkAllState() {
+        ConnectivityManager conMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+        if(isConnected) {
+            getGraph(tokenid);
+//            Toast.makeText(getApplicationContext(),"Internet Connected",Toast.LENGTH_LONG).show();
+        }else {
+//            Toast.makeText(getApplicationContext(),"Internet Not Connected",Toast.LENGTH_LONG).show();
+        }
+
+        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+
+        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            Toast.makeText(getApplicationContext(),"Internet Not Connected",Toast.LENGTH_LONG).show();
+        }
     }
 
     public void menu() {
@@ -201,6 +225,8 @@ public class DashBoard extends AppCompatActivity {
                         tc.setText(mgraph.getData().getTotal());
                         TextView dt = (TextView) findViewById(R.id.drawerTitle);
                         dt.setText(mgraph.getData().getAgentName());
+                        TextView rt = (TextView) findViewById(R.id.rejectCount);
+                        rt.setText(mgraph.getData().getReject());
                     }else{
                         Toast.makeText(getApplicationContext(),"No Data Found",Toast.LENGTH_LONG).show();
                     }
@@ -217,7 +243,7 @@ public class DashBoard extends AppCompatActivity {
 
     // Start the service
     public void startService() {
-        gpsService.startTracking();
+        gpsService.startTracking(tokenid);
     }
 
     // Stop the service

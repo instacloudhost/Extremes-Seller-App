@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(dashboard);
                         finish();
                     }else{
-                        mText.setText("Username or Password is Wrong");
+                        mText.setText(mlogin.getToken().toString());
                         progressDialog.cancel();
                     }
                 }
@@ -142,7 +142,12 @@ public class MainActivity extends AppCompatActivity {
         };
         TedPermission.with(MainActivity.this)
                 .setPermissionListener(permissionListener)
-                .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.READ_EXTERNAL_STORAGE)
-                .check();
+                .setPermissions(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ).check();
     }
 }

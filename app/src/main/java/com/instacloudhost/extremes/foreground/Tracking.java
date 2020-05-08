@@ -1,6 +1,5 @@
 package com.instacloudhost.extremes.foreground;
 
-import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -9,16 +8,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.instacloudhost.extremes.ViewCustomer;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.instacloudhost.extremes.model.MStatus;
 import com.instacloudhost.extremes.remote.APIService;
 import com.instacloudhost.extremes.remote.RetrofitClient;
@@ -33,14 +33,13 @@ import retrofit2.Retrofit;
 public class Tracking extends Service {
 
     private final LocationServiceBinder binder = new LocationServiceBinder();
-    private LocationManager locationManager;
-    private LocationListener locationListener;
     private NotificationChannel channel1;
     private NotificationManager manager;
-    private Location mLastLocation;
+    private FusedLocationProviderClient client;
+    private LocationRequest request;
+    private LocationCallback locationCallback;
 
-    private SharedPreferences token;
-    private String extremes = "extremesStorage";
+    private String token;
 
     // Notification Channel IDS
     private static final String CHANNEL_1_ID = "channel1";
@@ -49,34 +48,20 @@ public class Tracking extends Service {
 
     }
 
-    @SuppressLint("MissingPermission")
     @Override
     public void onCreate() {
 
-        token = getSharedPreferences(extremes,
-                Context.MODE_PRIVATE);
-
-        locationListener = new LocationListener() {
+        request = new LocationRequest();
+        request.setInterval((500*1000));
+        request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        client = LocationServices.getFusedLocationProviderClient(this);
+        locationCallback = new LocationCallback(){
             @Override
-            public void onLocationChanged(Location location) {
-                mLastLocation = location;
-                sendData(Double.valueOf(location.getLatitude()).toString(), Double.valueOf(location.getLongitude()).toString(),token.getString("token",""));
-                Log.d("Location Status:", Double.valueOf(location.getLatitude()).toString()+","+ Double.valueOf(location.getLongitude()).toString());
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-                Log.e("Location Status:", "onStatusChanged: " + status);
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-                Log.e("Location Status:", "onProviderEnabled: " + provider);
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-                Log.e("Location Status:", "onProviderDisabled: " + provider);
+            public void onLocationResult(LocationResult locationResult) {
+                Location location = locationResult.getLastLocation();
+                if (location != null) {
+                    sendData(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), token);
+                }
             }
         };
     }
@@ -95,27 +80,21 @@ public class Tracking extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (locationManager != null) {
-            locationManager.removeUpdates(locationListener);
-            locationManager = null;
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                manager.deleteNotificationChannel(CHANNEL_1_ID);
-            }
-            Toast.makeText(this,"Location Tracking Stopped",Toast.LENGTH_LONG).show();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            manager.deleteNotificationChannel(CHANNEL_1_ID);
         }
+        if(client != null) {
+            client.removeLocationUpdates(locationCallback);
+        }
+        Toast.makeText(this,"Location Tracking Stopped",Toast.LENGTH_LONG).show();
     }
 
-    public void startTracking() {
+    public void startTracking(String tk) {
+        token = tk;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForeground(12345678, getNotification());
         }
-        locationManager =  (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-        try {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,60000,500,locationListener);
-        } catch (java.lang.SecurityException ex) {
-        } catch (IllegalArgumentException ex) {
-        }
+        client.requestLocationUpdates(request, locationCallback ,null);
         Toast.makeText(this,"Location Tracking Started",Toast.LENGTH_LONG).show();
     }
 
@@ -148,16 +127,18 @@ public class Tracking extends Service {
     }
 
     // Data send to server
-    private void sendData(String lati, String longi, String agent) {
+    private void sendData(String lati, String longi, String agents) {
         Retrofit retrofit = RetrofitClient.getRetrofitClient();
         APIService apiservice = retrofit.create(APIService.class);
-        Call call = apiservice.tracking(lati,longi,agent);
+        Log.d("uid", agents);
+        Call call = apiservice.tracking(lati,longi,agents);
         call.enqueue(new Callback() {
             @Override
             public void onResponse(Call call, Response response) {
                 if (response.body() != null) {
                     MStatus mstatus = (MStatus) response.body();
                     if(mstatus.getStatus().equals("true")) {
+                        Toast.makeText(getApplicationContext(),mstatus.getMessage(),Toast.LENGTH_LONG).show();
                     }else{
                         Toast.makeText(getApplicationContext(),"No Data Found",Toast.LENGTH_LONG).show();
                     }

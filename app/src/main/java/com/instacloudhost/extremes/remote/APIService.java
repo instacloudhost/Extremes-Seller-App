@@ -7,8 +7,10 @@ import com.instacloudhost.extremes.model.Mlogin;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -36,7 +38,7 @@ public interface APIService {
     @FormUrlEncoded
     Call <MStatus> tracking(@Field("latitude") String lat,
                             @Field("longitude") String longi,
-                            @Field("agent_id") String agentId);
+                            @Field("agent_id") String agents);
 
     /*
         get all customers
@@ -51,4 +53,16 @@ public interface APIService {
                                @Part("customs") RequestBody customs,
                                @Part MultipartBody.Part selfie,
                                @Part MultipartBody.Part proof);
+
+    @GET("/api/checkversion")
+    Call <String> check_version();
+
+    /*
+        get all customers
+     */
+    @POST("/api/cmobile")
+    @FormUrlEncoded
+    Call <String> customerMobile(@Field("mobile") String mobile);
+
+
 }

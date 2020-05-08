@@ -1,6 +1,7 @@
 package com.instacloudhost.extremes;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.loader.content.CursorLoader;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -16,11 +17,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -28,14 +35,27 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.textfield.TextInputLayout;
+import com.instacloudhost.extremes.activity.FrontCameraActivity;
 import com.instacloudhost.extremes.model.MStatus;
 import com.instacloudhost.extremes.remote.APIService;
 import com.instacloudhost.extremes.remote.RetrofitClient;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
 public class AddCustomer extends AppCompatActivity {
 
@@ -43,12 +63,17 @@ public class AddCustomer extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private TextInputLayout c1, c2, c3, c4;
     private EditText customer_name, mobile, bn, upi, ac, crn;
+    private TextView t1;
     private String extremes = "extremeStorage", image = "photo", mLastLocation, iCategory, custom;
     private ImageView selfie_iamge,proof_image;
     private Bitmap currentImage;
+    private String cfu1 = "false", cfu2 = "false";
     private Uri f_image,s_image;
-    private LocationManager locationManager;
-    private LocationListener locationListener;
+    private File photoFile, file1, file2;
+    private LocationCallback locationCallback;
+    private FusedLocationProviderClient client;
+
+    static final int CAPTURE_IMAGE_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +87,8 @@ public class AddCustomer extends AppCompatActivity {
         token = getSharedPreferences(extremes,
                 Context.MODE_PRIVATE);
         Log.d("Token Customer:", token.getString("token", ""));
+
+        t1 = (TextView) findViewById(R.id.errorUpdate);
 
         c1 = (TextInputLayout) findViewById(R.id.bn);
         c2 = (TextInputLayout) findViewById(R.id.upi_id);
@@ -109,9 +136,10 @@ public class AddCustomer extends AppCompatActivity {
         }
     }
 
-    private void add_customer(String cn, String mb, Uri f_image, Uri s_image) {
-        File file1 = new File(getRealPathFromURI(f_image));
-        File file2 = new File(getRealPathFromURI(s_image));
+    private void add_customer(String cn, String mb) {
+
+        file1 = new File(getRealPathFromURI(f_image));
+        file2 = new File(getRealPathFromURI(s_image));
 
         //creating request body for file
         RequestBody requestFile1 = RequestBody.create(MediaType.parse(getContentResolver().getType(f_image)), file1);
@@ -119,10 +147,10 @@ public class AddCustomer extends AppCompatActivity {
         RequestBody requestFile2 = RequestBody.create(MediaType.parse(getContentResolver().getType(s_image)), file2);
         MultipartBody.Part body2 = MultipartBody.Part.createFormData("proof", "image2.jpg", requestFile2);
 
-        RequestBody tk = RequestBody.create(MediaType.parse("text/plain"), token.getString("token",""));
+        RequestBody tk = RequestBody.create(MediaType.parse("text/plain"), token.getString("token", ""));
         RequestBody customer_name = RequestBody.create(MediaType.parse("text/plain"), cn);
         RequestBody mobile = RequestBody.create(MediaType.parse("text/plain"), mb);
-        RequestBody location = RequestBody.create(MediaType.parse("text/plain"), ""+mLastLocation);
+        RequestBody location = RequestBody.create(MediaType.parse("text/plain"), "" + mLastLocation);
         RequestBody category = RequestBody.create(MediaType.parse("text/plain"), iCategory);
         RequestBody customs = RequestBody.create(MediaType.parse("text/plain"), custom);
 
@@ -134,20 +162,23 @@ public class AddCustomer extends AppCompatActivity {
             public void onResponse(Call call, Response response) {
                 if (response.body() != null) {
                     MStatus mstatus = (MStatus) response.body();
-                    Log.d("Response: ", String.valueOf(mstatus));
-                    if(mstatus.getStatus().equals("true")) {
+                    Log.d("Response: ", String.valueOf(mstatus.getMessage()));
+                    if (mstatus.getStatus().equals("true")) {
+                        client.removeLocationUpdates(locationCallback);
+                        progressDialog.cancel();
                         Intent main = new Intent(getBaseContext(), ViewCustomer.class);
                         startActivity(main);
-                    }else{
-                        Toast.makeText(getApplicationContext(),"No Data Found",Toast.LENGTH_LONG).show();
+                        finish();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "No Data Found", Toast.LENGTH_LONG).show();
                     }
                 }
             }
 
             @Override
             public void onFailure(Call call, Throwable t) {
-                Toast.makeText(getApplicationContext(),t.getMessage(),Toast.LENGTH_LONG).show();
-                Log.d("Error: ",t.getMessage());
+                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.d("Error: ", t.getMessage());
             }
         });
     }
@@ -164,30 +195,22 @@ public class AddCustomer extends AppCompatActivity {
     }
 
     private void location() {
-        locationListener = new LocationListener() {
+
+        LocationRequest request = new LocationRequest();
+        request.setInterval(180*1000);
+        request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        client = LocationServices.getFusedLocationProviderClient(this);
+        locationCallback = new LocationCallback(){
             @Override
-            public void onLocationChanged(Location location) {
-                mLastLocation = Double.valueOf(location.getLatitude()).toString()+","+Double.valueOf(location.getLongitude()).toString();
-                if (locationManager != null) {
-                    locationManager.removeUpdates(locationListener);
-                    locationManager = null;
+            public void onLocationResult(LocationResult locationResult) {
+                Location location = locationResult.getLastLocation();
+                if (location != null) {
+                    mLastLocation = Double.valueOf(location.getLatitude()).toString()+","+Double.valueOf(location.getLongitude()).toString();
+                    Log.d("loc: ",mLastLocation);
                 }
             }
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {Log.d("Latitude","status"); }
-            @Override
-            public void onProviderEnabled(String provider) {Log.d("Latitude","enable"); }
-            @Override
-            public void onProviderDisabled(String provider) {Log.d("Latitude","disable"); }
         };
-        locationManager =  (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-        try {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-        } catch (java.lang.SecurityException ex) {
-            // Log.i(TAG, "fail to request location update, ignore", ex);
-        } catch (IllegalArgumentException ex) {
-            // Log.d(TAG, "gps provider does not exist " + ex.getMessage());
-        }
+        client.requestLocationUpdates(request, locationCallback ,null);
     }
 
     private View.OnClickListener addCustomer = new View.OnClickListener() {
@@ -203,9 +226,32 @@ public class AddCustomer extends AppCompatActivity {
                 custom = "";
             }
             if (!TextUtils.isEmpty(cn) && !TextUtils.isEmpty(mb)){
-                add_customer(cn,mb,f_image,s_image);
+                if(checkAllState(mb)){
+                    Retrofit retrofit = RetrofitClient.getRetrofitClient();
+                    APIService apiservice = retrofit.create(APIService.class);
+                    Call call = apiservice.customerMobile(mb);
+                    call.enqueue(new Callback() {
+                        @Override
+                        public void onResponse(Call call, Response response) {
+                            if (response.body().equals("true")) {
+                                t1.setText("Mobile Number Already Exist");
+                                progressDialog.cancel();
+                            }else {
+                                add_customer(cn,mb);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call call, Throwable t) {
+                            Toast.makeText(getApplicationContext(),t.getMessage(),Toast.LENGTH_LONG).show();
+                            Log.d("Error: ",t.getMessage());
+                        }
+                    });
+                }else {
+                    progressDialog.cancel();
+                }
             }else{
-                Toast.makeText(getApplicationContext(),"Something Wrong",Toast.LENGTH_LONG).show();
+                t1.setText("Please Enter Customer Name and Mobile");
                 progressDialog.cancel();
             }
         }
@@ -214,46 +260,121 @@ public class AddCustomer extends AppCompatActivity {
     private View.OnClickListener getPhoto = new View.OnClickListener() {
         public void onClick(View v) {
             image = "photo";
-            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-            photoPickerIntent.setType("image/*");
-            startActivityForResult(photoPickerIntent, 1);
+            try {
+                camptureImage();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     };
 
     private View.OnClickListener getProof = new View.OnClickListener() {
         public void onClick(View v) {
             image = "proof";
-            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-            photoPickerIntent.setType("image/*");
-            startActivityForResult(photoPickerIntent, 1);
+            try {
+                camptureImage();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     };
+
+    private void camptureImage() throws IOException {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        photoFile = createImageNew();
+        Uri photoURI = FileProvider.getUriForFile(this,
+                "com.instacloudhost.extremes.fileprovider",
+                photoFile);
+        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+        startActivityForResult(takePictureIntent, CAPTURE_IMAGE_REQUEST);
+    }
+
+    private File createImageNew() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+        // Save a file: path for use with ACTION_VIEW intents
+//        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void processImage() {
+        Bitmap image = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+        int width = image.getWidth();
+        int height = image.getHeight();
+        float newWidth = ((float) 750/width);
+        float newHeight = ((float) 450/height);
+        Matrix matrix = new Matrix();
+        matrix.postScale(newWidth, newHeight);
+        matrix.postRotate(-90);
+        currentImage = Bitmap.createBitmap(image, 0, 0, width, height, matrix, true);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        currentImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+//        Log.i("new width", currentImage.getWidth() + "");
+//        Log.i("new height", currentImage.getHeight() + "");
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (resultCode == RESULT_OK) {
-            Uri photoUri = data.getData();
-//            Log.d("Photo URL:",photoUri.getPath());
-            if (photoUri != null) {
-                try {
-                    currentImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
-                    switch (image) {
-                        case "photo":
-                            selfie_iamge.setImageBitmap(currentImage);
-                            f_image = photoUri;
-                            break;
-                        case "proof":
-                            proof_image.setImageBitmap(currentImage);
-                            s_image = photoUri;
-                            break;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                processImage();
+            switch (image) {
+                case "photo":
+                    selfie_iamge.setImageBitmap(currentImage);
+                    String path = MediaStore.Images.Media.insertImage(getContentResolver(), currentImage, "Selfie", null);
+                    f_image = Uri.parse(path);
+                    cfu1 = "true";
+                    break;
+                case "proof":
+                    proof_image.setImageBitmap(currentImage);
+                    String path2 = MediaStore.Images.Media.insertImage(getContentResolver(), currentImage, "Proof", null);
+                    s_image = Uri.parse(path2);
+                    cfu2 = "true";
+                    break;
             }
         }
+    }
+
+    private Boolean checkAllState(String mobile) {
+        ConnectivityManager conMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+        if(!isConnected) {
+            t1.setText("Internet Not Connected");
+            return false;
+        }
+
+        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+
+        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            t1.setText("GPS is Off");
+            return false;
+        }
+
+        if(mobile.length() != 10 || !Pattern.matches("[0-9]+", mobile)) {
+            t1.setText("Please Enter Valid Mobile Number");
+            return false;
+        }
+
+        if(cfu1.equals("false")) {
+            t1.setText("Please Click a Selfie");
+            return false;
+        }
+
+        if(cfu2.equals("false")) {
+            t1.setText("Please Choose a service proof");
+            return false;
+        }
+        return true;
     }
 
     private void progressBar() {

@@ -4,6 +4,9 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class graphData {
+    @SerializedName("reject")
+    @Expose
+    private String reject;
     @SerializedName("total")
     @Expose
     private String total;
@@ -28,6 +31,14 @@ public class graphData {
 
     public void setToday(String today) {
         this.today = today;
+    }
+
+    public String getReject() {
+        return reject;
+    }
+
+    public void setReject(String reject) {
+        this.total = reject;
     }
 
     public String getAgentName() {

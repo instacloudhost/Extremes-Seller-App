@@ -8,8 +8,8 @@ android {
         applicationId "com.instacloudhost.extremes"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -53,4 +53,6 @@ dependencies {
 
     // Fontawasom
     implementation 'info.androidhive:fontawesome:0.0.5'
+
+    implementation 'org.jsoup:jsoup:1.8.3'
 }
