@@ -12,4 +12,37 @@
         Extreme Manpower (P) Limited
         "\n"Click the Link Bellow to download Extreme Sales Service App
         "\n"https://extremes.in/download/app</string>
+    <string name="title_activity_winds_form">WindsForm</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="states_prompt">Choose a State</string>
+    <string name="districts_prompt">Choose a State</string>
+    <string name="err_name">Please Enter Valid String</string>
+    <string name="err_pan">Please Valid PAN Number</string>
+    <string name="err_mobile">Enter Valid Mobile Number</string>
+    <string name="err_email">Enter Valid Email</string>
+    <string name="err_pin">Enter Valid PIN</string>
+    <string name="err_gender">Please Choose Gender</string>
+    <string name="err_customer_name">Enter Valid Customer Name</string>
+
+    <string-array name="states">
+        <item>Malaysia</item>
+        <item>United States</item>
+        <item>Indonesia</item>
+        <item>France</item>
+        <item>Italy</item>
+        <item>Singapore</item>
+        <item>New Zealand</item>
+        <item>India</item>
+    </string-array>
+    <string-array name="districts">
+        <item>Italy</item>
+        <item>Singapore</item>
+        <item>New Zealand</item>
+        <item>India</item>
+    </string-array>
 </resources>
