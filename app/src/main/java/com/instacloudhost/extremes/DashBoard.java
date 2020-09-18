@@ -1,6 +1,7 @@
 package com.instacloudhost.extremes;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,6 +16,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.ui.AppBarConfiguration;
 import info.androidhive.fontawesome.FontDrawable;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,7 +41,6 @@ import com.instacloudhost.extremes.foreground.Tracking;
 import com.instacloudhost.extremes.model.Mgraph;
 import com.instacloudhost.extremes.remote.APIService;
 import com.instacloudhost.extremes.remote.RetrofitClient;
-import com.instacloudhost.extremes.sections.WindsForm;
 
 public class DashBoard extends AppCompatActivity {
 
@@ -334,34 +335,6 @@ public class DashBoard extends AppCompatActivity {
         Intent main = new Intent(getBaseContext(), AddCustomer.class);
         main.putExtra("category", "10");
         main.putExtra("title", "IRCTC I Mundra KYC");
-        startActivity(main);
-    }
-
-    public void winds(View view) {
-        Intent main = new Intent(getBaseContext(), WindsForm.class);
-        main.putExtra("category", "11");
-        main.putExtra("title", "WINDS");
-        startActivity(main);
-    }
-
-    public void pineLabs(View view) {
-        Intent main = new Intent(getBaseContext(), AddCustomer.class);
-        main.putExtra("category", "12");
-        main.putExtra("title", "Pinelabs");
-        startActivity(main);
-    }
-
-    public void smartLife(View view) {
-        Intent main = new Intent(getBaseContext(), AddCustomer.class);
-        main.putExtra("category", "13");
-        main.putExtra("title", "SmartLife");
-        startActivity(main);
-    }
-
-    public void phonePe(View view) {
-        Intent main = new Intent(getBaseContext(), AddCustomer.class);
-        main.putExtra("category", "14");
-        main.putExtra("title", "PhonePe");
         startActivity(main);
     }
 

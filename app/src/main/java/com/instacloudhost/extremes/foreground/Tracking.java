@@ -52,7 +52,7 @@ public class Tracking extends Service {
     public void onCreate() {
 
         request = new LocationRequest();
-        request.setInterval((900*1000));
+        request.setInterval((500*1000));
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         client = LocationServices.getFusedLocationProviderClient(this);
         locationCallback = new LocationCallback(){

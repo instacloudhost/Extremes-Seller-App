@@ -28,7 +28,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -122,7 +121,6 @@ public class AddCustomer extends AppCompatActivity {
             case "2":
             case "3":
             case "4":
-            case "14":
             case "5":
                 c1.setVisibility(View.VISIBLE);
                 c2.setVisibility(View.VISIBLE);
@@ -168,12 +166,11 @@ public class AddCustomer extends AppCompatActivity {
                     if (mstatus.getStatus().equals("true")) {
                         client.removeLocationUpdates(locationCallback);
                         progressDialog.cancel();
-                        Toast.makeText(getApplicationContext(), "Successfully Added", Toast.LENGTH_LONG).show();
-                        Intent main = new Intent(getBaseContext(), DashBoard.class);
+                        Intent main = new Intent(getBaseContext(), ViewCustomer.class);
                         startActivity(main);
                         finish();
                     } else {
-                        Toast.makeText(getApplicationContext(), "There is some Problem Adding Customer", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "No Data Found", Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -399,5 +396,4 @@ public class AddCustomer extends AppCompatActivity {
             }
         }).start();
     }
-
 }
