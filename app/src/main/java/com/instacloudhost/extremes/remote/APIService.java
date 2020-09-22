@@ -111,4 +111,7 @@ public interface APIService {
                                @Part MultipartBody.Part selfie);
 
 
+    @POST("/api/listdistrict")
+    @FormUrlEncoded
+    Call <String> listDistrict(@Field("state") String state);
 }

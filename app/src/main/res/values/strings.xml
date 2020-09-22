@@ -28,6 +28,8 @@
     <string name="err_pin">Enter Valid PIN</string>
     <string name="err_gender">Please Choose Gender</string>
     <string name="err_customer_name">Enter Valid Customer Name</string>
+    <string name="err_van">Enter Valid Vorter or Aadhar No</string>
+    <string name="err_account_no">Enter Valid Account No.</string>
 
     <string-array name="states">
         <item>Malaysia</item>

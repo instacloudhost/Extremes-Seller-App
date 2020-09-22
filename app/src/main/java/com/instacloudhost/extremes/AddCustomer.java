@@ -173,7 +173,7 @@ public class AddCustomer extends AppCompatActivity {
                         startActivity(main);
                         finish();
                     } else {
-                        Toast.makeText(getApplicationContext(), "There is some Problem Adding Customer", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), mstatus.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
             }

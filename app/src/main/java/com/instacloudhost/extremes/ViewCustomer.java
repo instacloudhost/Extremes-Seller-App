@@ -51,13 +51,7 @@ public class ViewCustomer extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 // TODO Auto-generated method stub
-
                 loadWebView(adapter.getItemId(position));
-
-                /* appending I Love with car brand names */
-                String value = "I Love " + adapter.getItemId(position);
-                /* Display the Toast */
-                Toast.makeText(getApplicationContext(), value, Toast.LENGTH_SHORT).show();
             }
         });
     }
