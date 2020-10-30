@@ -68,7 +68,7 @@ public class AddCustomer extends AppCompatActivity {
     private TextInputLayout c1, c2, c3, c4;
     private EditText customer_name, mobile, bn, upi, ac, crn;
     private TextView t1;
-    private String extremes = "extremeStorage", image = "photo", mLastLocation, iCategory, custom;
+    private String extremes = "extremeStorage", image = "photo", mLastLocation, iCategory, custom, layout;
     private ImageView selfie_iamge, proof_image;
     private Bitmap currentImage;
     private String cfu1 = "false", cfu2 = "false";
@@ -84,13 +84,14 @@ public class AddCustomer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         iCategory = intent.getStringExtra("category");
+        layout = intent.getStringExtra("layout");
         setTitle(intent.getStringExtra("title"));
 
         setContentView(R.layout.activity_add_customer);
 
         token = getSharedPreferences(extremes,
                 Context.MODE_PRIVATE);
-        Log.d("Token Customer:", token.getString("token", ""));
+        Log.d("Layout:", layout);
 
         t1 = (TextView) findViewById(R.id.errorUpdate);
 
@@ -116,29 +117,17 @@ public class AddCustomer extends AppCompatActivity {
         submit.setOnClickListener(addCustomer);
         photo.setOnClickListener(getPhoto);
         proof.setOnClickListener(getProof);
-        check_category_form(iCategory);
+        check_category_form(layout);
         location();
     }
 
     private void check_category_form(String cat) {
         switch (cat) {
-            case "2":
-            case "3":
-            case "4":
-            case "14":
-            case "15":
-            case "5":
-                c1.setVisibility(View.VISIBLE);
-                c2.setVisibility(View.VISIBLE);
-                break;
-            case "6":
-            case "7":
-            case "8":
+            case "layout_two":
                 c3.setVisibility(View.VISIBLE);
                 c4.setVisibility(View.VISIBLE);
                 break;
             default:
-                custom = "";
         }
     }
 

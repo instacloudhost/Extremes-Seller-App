@@ -1,9 +1,12 @@
 package com.instacloudhost.extremes.remote;
 
+import com.instacloudhost.extremes.model.DetailModel;
 import com.instacloudhost.extremes.model.MStatus;
 import com.instacloudhost.extremes.model.MWindForm;
 import com.instacloudhost.extremes.model.Mgraph;
 import com.instacloudhost.extremes.model.Mlogin;
+
+import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -57,6 +60,12 @@ public interface APIService {
                                @Part("customs") RequestBody customs,
                                @Part MultipartBody.Part selfie,
                                @Part MultipartBody.Part proof);
+
+    @POST("/api/listservices")
+    @FormUrlEncoded
+    Call <List<DetailModel>> ListService(@Field("agent_id") String agentId,
+                                         @Field("agent_type") String agentType,
+                                         @Field("category") String category);
 
     @GET("/api/checkversion")
     Call <String> check_version();

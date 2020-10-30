@@ -15,11 +15,15 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import info.androidhive.fontawesome.FontDrawable;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -35,12 +39,18 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.instacloudhost.extremes.adapter.DetailAdapter;
 import com.instacloudhost.extremes.foreground.Tracking;
+import com.instacloudhost.extremes.model.DetailModel;
+import com.instacloudhost.extremes.model.MStatus;
 import com.instacloudhost.extremes.model.Mgraph;
 import com.instacloudhost.extremes.remote.APIService;
 import com.instacloudhost.extremes.remote.RetrofitClient;
 import com.instacloudhost.extremes.sections.WindsForm;
 import com.instacloudhost.extremes.sections.WindsUploads;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DashBoard extends AppCompatActivity {
 
@@ -50,6 +60,9 @@ public class DashBoard extends AppCompatActivity {
     DrawerLayout drawerLayout;
     Toolbar toolbar;
     private String tokenid, userType;
+    ArrayList<DetailModel> detailModels = new ArrayList<>();
+    private DetailAdapter detailAdapter;
+    private RecyclerView detail_recyclerview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,14 +76,38 @@ public class DashBoard extends AppCompatActivity {
         System.out.println(userType);
         menu();
 
-        checkAllState();
+        //checkAllState();
 
         final Intent intent = new Intent(this.getApplication(), Tracking.class);
         this.getApplication().startService(intent);
         this.getApplication().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
+        detail_recyclerview=(RecyclerView)findViewById(R.id.recyclerview_menu_btn);
+        detail_recyclerview.setLayoutManager(new GridLayoutManager(this,3));
+        getDetailResponse();
+
+    }
 
 
+    private void getDetailResponse() {
+
+        Retrofit retrofit = RetrofitClient.getRetrofitClient();
+        APIService apiservice = retrofit.create(APIService.class);
+        Call call = apiservice.ListService(token.getString("agent_id",""), token
+                .getString("agent_type",""), token.getString("category",""));
+        call.enqueue(new Callback<List<DetailModel>>() {
+            @Override
+            public void onResponse(Call<List<DetailModel>> call, Response<List<DetailModel>> response) {
+                detailModels = new ArrayList<>(response.body());
+                detailAdapter = new DetailAdapter(DashBoard.this, detailModels);
+                detail_recyclerview.setAdapter(detailAdapter);
+            }
+
+            @Override
+            public void onFailure(Call<List<DetailModel>> call, Throwable t) {
+                Toast.makeText(DashBoard.this, "Failure"+t, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void checkAllState() {
