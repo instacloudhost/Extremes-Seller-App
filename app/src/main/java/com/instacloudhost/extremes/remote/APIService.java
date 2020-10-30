@@ -23,14 +23,16 @@ public interface APIService {
     @POST("/api/login")
     @FormUrlEncoded
     Call <Mlogin> checkUser(@Field("username") String username,
-                            @Field("password") String password);
+                            @Field("password") String password,
+                            @Field("type") String type);
 
     /*
         get all customers
      */
     @POST("/api/graph")
     @FormUrlEncoded
-    Call <Mgraph> graph(@Field("agent_id") String agent);
+    Call <Mgraph> graph(@Field("agent_id") String agent,
+                        @Field("user_type") String utype);
 
     /*
         get all customers
@@ -47,6 +49,7 @@ public interface APIService {
     @POST("/api/addcustomer")
     @Multipart
     Call <MStatus> addCustomer(@Part("agent_id") RequestBody agentId,
+                               @Part("agent_type") RequestBody agentType,
                                @Part("customer_name") RequestBody customerName,
                                @Part("mobile") RequestBody mobile,
                                @Part("location") RequestBody location,
@@ -57,6 +60,9 @@ public interface APIService {
 
     @GET("/api/checkversion")
     Call <String> check_version();
+
+    @GET("/api/app_view_customer")
+    Call <String> viewCustomer();
 
     @GET("/api/states")
     Call <MStatus> states();
@@ -94,7 +100,8 @@ public interface APIService {
                               @Field("district") String district,
                               @Field("gender") String gender,
                               @Field("relation") String relation,
-                              @Field("agent_id") String agentId
+                              @Field("agent_id") String agentId,
+                              @Field("agent_type") String agentType
     );
 
     /*
@@ -110,6 +117,18 @@ public interface APIService {
                                @Part MultipartBody.Part pass,
                                @Part MultipartBody.Part selfie);
 
+    /*
+        Winds Files Upload
+     */
+    @POST("/api/windsuploadbyfield")
+    @Multipart
+    Call <MStatus> windsUploadByField(@Part("customer_id") RequestBody customerID,
+                                      @Part("field_name") RequestBody fieldName,
+                                      @Part MultipartBody.Part str);
+
+    @POST("/api/windsfilecheck")
+    @FormUrlEncoded
+    Call <MStatus> windsFileCheck(@Field("customer_id") String cid);
 
     @POST("/api/listdistrict")
     @FormUrlEncoded

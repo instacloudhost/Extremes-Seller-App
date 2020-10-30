@@ -140,7 +140,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Passbook/Cheque and Selfie"
+                    android:text="Passbook/Cheque and Shop Owner Photo"
                     />
             </LinearLayout>
 
@@ -185,7 +185,7 @@
                     android:textSize="20dp"
                     app:backgroundTint="@color/colorPrimary"
                     style="@style/Widget.MaterialComponents.Button"
-                    android:text="Selfie" />
+                    android:text="SOP" />
             </LinearLayout>
 
         <LinearLayout

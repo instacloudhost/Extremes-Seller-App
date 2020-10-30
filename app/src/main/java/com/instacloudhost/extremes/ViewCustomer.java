@@ -13,6 +13,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.instacloudhost.extremes.activity.ViewCusDetails;
 import com.instacloudhost.extremes.webviews.CustomerWebView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -57,33 +58,36 @@ public class ViewCustomer extends AppCompatActivity {
     }
 
     private void loadWebView(Long id) {
-        Intent i = new Intent(ViewCustomer.this, CustomerWebView.class);
+
         switch (Long.toString(id)){
             case "0":
-                i.putExtra(CustomerWebView.WEBSITE_ADDRESS, "https://extremes.in/api/view_customer/");
-                i.putExtra(CustomerWebView.TOKEN, tk);
-                i.putExtra(CustomerWebView.CATEGORY, "smartlife");
-                startActivity(i);
+                webCustom("smartlife", "13");
                 break;
             case "1":
-                i.putExtra(CustomerWebView.WEBSITE_ADDRESS, "https://extremes.in/api/view_customer/");
-                i.putExtra(CustomerWebView.TOKEN, tk);
-                i.putExtra(CustomerWebView.CATEGORY, "pinelabs");
-                startActivity(i);
+                webCustom("pinelabs", "12");
                 break;
             case "2":
-                i.putExtra(CustomerWebView.WEBSITE_ADDRESS, "https://extremes.in/api/view_customer/");
-                i.putExtra(CustomerWebView.TOKEN, tk);
-                i.putExtra(CustomerWebView.CATEGORY, "winds");
-                startActivity(i);
+                webCustom("winds", "0");
                 break;
             case "3":
-                i.putExtra(CustomerWebView.WEBSITE_ADDRESS, "https://extremes.in/api/view_customer/");
-                i.putExtra(CustomerWebView.TOKEN, tk);
-                i.putExtra(CustomerWebView.CATEGORY, "phonepe");
-                startActivity(i);
+                webCustom("phonePe", "14");
                 break;
         }
+    }
+
+    private void webCustom(String str, String cat) {
+        Intent i = new Intent(ViewCustomer.this, CustomerWebView.class);
+        i.putExtra(CustomerWebView.WEBSITE_ADDRESS, "https://extremes.in/api/view_customer/");
+        i.putExtra(CustomerWebView.TOKEN, tk);
+        i.putExtra(CustomerWebView.CATEGORY, str);
+        i.putExtra(CustomerWebView.CAT, cat);
+        i.putExtra(CustomerWebView.USER_TYPE, token.getString("user_type", ""));
+        startActivity(i);
+    }
+
+    private void windsCustom() {
+        Intent i = new Intent(ViewCustomer.this, ViewCusDetails.class);
+        startActivity(i);
     }
 
 }

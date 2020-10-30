@@ -12,6 +12,8 @@ public class CustomerWebView extends AppCompatActivity {
     public static final String WEBSITE_ADDRESS = "website_address";
     public static final String CATEGORY = "CAT";
     public static final String TOKEN = "CATf";
+    public static final String CAT = "CATC";
+    public static final String USER_TYPE = "USER";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +22,9 @@ public class CustomerWebView extends AppCompatActivity {
         String url  = getIntent().getStringExtra(WEBSITE_ADDRESS);
         String cat  = getIntent().getStringExtra(CATEGORY);
         String tok  = getIntent().getStringExtra(TOKEN);
-        url = url+"?token="+tok+"&category="+cat;
+        String cat_cat  = getIntent().getStringExtra(CAT);
+        String user_type  = getIntent().getStringExtra(USER_TYPE);
+        url = url+"?token="+tok+"&category="+cat+"&cat="+cat_cat+"&user_type="+user_type;
         System.out.println(url);
 
         setContentView(R.layout.activity_customer_web_view);

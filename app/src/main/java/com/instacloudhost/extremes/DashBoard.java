@@ -40,6 +40,7 @@ import com.instacloudhost.extremes.model.Mgraph;
 import com.instacloudhost.extremes.remote.APIService;
 import com.instacloudhost.extremes.remote.RetrofitClient;
 import com.instacloudhost.extremes.sections.WindsForm;
+import com.instacloudhost.extremes.sections.WindsUploads;
 
 public class DashBoard extends AppCompatActivity {
 
@@ -48,7 +49,7 @@ public class DashBoard extends AppCompatActivity {
     public Tracking gpsService;
     DrawerLayout drawerLayout;
     Toolbar toolbar;
-    private String tokenid;
+    private String tokenid, userType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +59,8 @@ public class DashBoard extends AppCompatActivity {
         token = getSharedPreferences(extremes,
                 Context.MODE_PRIVATE);
         tokenid = token.getString("token", "");
-        Log.d("uid: ", tokenid);
+        userType = token.getString("user_type", "");
+        System.out.println(userType);
         menu();
 
         checkAllState();
@@ -66,6 +68,8 @@ public class DashBoard extends AppCompatActivity {
         final Intent intent = new Intent(this.getApplication(), Tracking.class);
         this.getApplication().startService(intent);
         this.getApplication().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+
+
 
     }
 
@@ -211,7 +215,7 @@ public class DashBoard extends AppCompatActivity {
     private void getGraph(String token) {
         Retrofit retrofit = RetrofitClient.getRetrofitClient();
         APIService apiservice = retrofit.create(APIService.class);
-        Call call = apiservice.graph(token);
+        Call call = apiservice.graph(token, userType);
         call.enqueue(new Callback() {
             @Override
             public void onResponse(Call call, Response response) {
@@ -223,7 +227,7 @@ public class DashBoard extends AppCompatActivity {
                         TextView tc = (TextView) findViewById(R.id.totalCount);
                         tc.setText(mgraph.getData().getTotal());
                         TextView dt = (TextView) findViewById(R.id.drawerTitle);
-                        dt.setText(mgraph.getData().getAgentName());
+                        dt.setText(mgraph.getData().getAgentName().toString());
                         TextView rt = (TextView) findViewById(R.id.rejectCount);
                         rt.setText(mgraph.getData().getReject());
                     }else{
@@ -362,6 +366,13 @@ public class DashBoard extends AppCompatActivity {
         Intent main = new Intent(getBaseContext(), AddCustomer.class);
         main.putExtra("category", "14");
         main.putExtra("title", "PhonePe");
+        startActivity(main);
+    }
+
+    public void mSwipe(View view) {
+        Intent main = new Intent(getBaseContext(), AddCustomer.class);
+        main.putExtra("category", "15");
+        main.putExtra("title", "MSwipe");
         startActivity(main);
     }
 

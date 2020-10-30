@@ -11,8 +11,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,9 +24,11 @@ import com.gun0912.tedpermission.TedPermission;
 import com.instacloudhost.extremes.model.Mlogin;
 import com.instacloudhost.extremes.remote.APIService;
 import com.instacloudhost.extremes.remote.RetrofitClient;
+import com.instacloudhost.extremes.sections.WindsForm;
 
 import java.util.List;
 
+import fr.ganfra.materialspinner.MaterialSpinner;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -34,7 +39,7 @@ import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 public class MainActivity extends AppCompatActivity {
 
     private SharedPreferences token;
-    private String extremes = "extremeStorage";
+    private String extremes = "extremeStorage", type;
     private ProgressDialog progressDialog;
     private EditText username,password;
     private TextView mText;
@@ -44,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         token = getSharedPreferences(extremes,
                 Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = token.edit();
+//        editor.putString("token", "112379");
+//        editor.commit();
         if (token.contains("token")) {
             Intent dashboard = new Intent(getBaseContext(), DashBoard.class);
             startActivity(dashboard);
@@ -57,6 +65,23 @@ public class MainActivity extends AppCompatActivity {
         mText = (TextView)findViewById(R.id.textView1);
         Button button = (Button)findViewById(R.id.login);
 
+        String[] ITEMS = {"FSE", "Agent"};
+        ArrayAdapter<String> distAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, ITEMS);
+        distAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        MaterialSpinner spinner = (MaterialSpinner) findViewById(R.id.userType);
+        spinner.setAdapter(distAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                type = parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         // Login Button
         button.setOnClickListener(logIn);
         permit();
@@ -68,19 +93,19 @@ public class MainActivity extends AppCompatActivity {
             progressBar();
             String user = username.getText().toString().trim();
             String pass = password.getText().toString().trim();
-            if (!TextUtils.isEmpty(user) && !TextUtils.isEmpty(pass)){
-                checkUser(user, pass);
+            if (!TextUtils.isEmpty(user) && !TextUtils.isEmpty(pass) && !TextUtils.isEmpty(type)){
+                checkUser(user, pass, type);
             }else{
-                mText.setText("Username or Password is Empty");
+                mText.setText("All fields are required.");
                 progressDialog.cancel();
             }
         }
     };
 
-    private void checkUser(String user, String pass) {
+    private void checkUser(String user, String pass, String tps) {
         Retrofit retrofit = RetrofitClient.getRetrofitClient();
         APIService apiservice = retrofit.create(APIService.class);
-        Call call = apiservice.checkUser(user, pass);
+        Call call = apiservice.checkUser(user, pass, tps);
         call.enqueue(new Callback() {
             @Override
             public void onResponse(Call call, Response response) {
@@ -89,13 +114,14 @@ public class MainActivity extends AppCompatActivity {
                     if(mlogin.getStatus().equals("true")) {
                         SharedPreferences.Editor editor = token.edit();
                         editor.putString("token", mlogin.getToken());
+                        editor.putString("user_type", type);
                         editor.commit();
-                        progressDialog.dismiss();
+                        progressDialog.cancel();
                         Intent dashboard = new Intent(getBaseContext(), DashBoard.class);
                         startActivity(dashboard);
-                        finish();
+//                        finish();
                     }else{
-                        mText.setText(mlogin.getToken().toString());
+                        mText.setText("Username or Password is Wrong.");
                         progressDialog.cancel();
                     }
                 }
@@ -146,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
                         Manifest.permission.ACCESS_FINE_LOCATION,
                         Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.CAMERA,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE
                 ).check();
     }

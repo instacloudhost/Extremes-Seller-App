@@ -26,6 +26,7 @@
             android:contentDescription="@string/app_name"
             android:src="@drawable/ic_launcher" />
 
+
         <TextView
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
@@ -47,6 +48,21 @@
             android:text="@string/empty"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#df272a" />
+
+
+        <fr.ganfra.materialspinner.MaterialSpinner
+            android:id="@+id/userType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            app:ms_multiline="false"
+            app:ms_hint="Choose Type"
+            app:ms_enableFloatingLabel="false"
+            app:ms_enableErrorLabel="false"
+            app:ms_floatingLabelText="floating label"
+            app:ms_thickness="1dp"
+            app:ms_arrowSize="12dp"
+            app:ms_alignLabels="false" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"

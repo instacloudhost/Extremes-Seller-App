@@ -80,13 +80,6 @@ public class Tracking extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            manager.deleteNotificationChannel(CHANNEL_1_ID);
-        }
-        if(client != null) {
-            client.removeLocationUpdates(locationCallback);
-        }
-        Toast.makeText(this,"Location Tracking Stopped",Toast.LENGTH_LONG).show();
     }
 
     public void startTracking(String tk) {
@@ -99,6 +92,13 @@ public class Tracking extends Service {
     }
 
     public void stopTracking() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            manager.deleteNotificationChannel(CHANNEL_1_ID);
+        }
+        if(client != null) {
+            client.removeLocationUpdates(locationCallback);
+        }
+        Toast.makeText(this,"Location Tracking Stopped",Toast.LENGTH_LONG).show();
         this.onDestroy();
     }
 

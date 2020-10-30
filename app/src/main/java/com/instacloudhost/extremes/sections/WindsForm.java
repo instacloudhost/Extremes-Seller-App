@@ -2,10 +2,7 @@ package com.instacloudhost.extremes.sections;
 
 import android.app.DatePickerDialog;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
-import java.util.Set;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -17,7 +14,6 @@ import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import fr.ganfra.materialspinner.MaterialSpinner;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -31,17 +27,10 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.basgeekball.awesomevalidation.AwesomeValidation;
-import com.google.gson.Gson;
 import com.instacloudhost.extremes.R;
-import com.instacloudhost.extremes.model.MDistrict;
 import com.instacloudhost.extremes.model.MStatus;
 import com.instacloudhost.extremes.remote.APIService;
 import com.instacloudhost.extremes.remote.RetrofitClient;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import static com.basgeekball.awesomevalidation.ValidationStyle.UNDERLABEL;
 
 public class WindsForm extends AppCompatActivity {
@@ -79,7 +68,8 @@ public class WindsForm extends AppCompatActivity {
         mAwesomeValidation.addValidation(this, R.id.email, "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$", R.string.err_email);
         mAwesomeValidation.addValidation(this, R.id.vidano, "^[0-9a-zA-z]{10,15}$", R.string.err_van);
         mAwesomeValidation.addValidation(this, R.id.nominee, "[a-zA-Z\\s]+", R.string.err_name);
-        mAwesomeValidation.addValidation(this, R.id.accountNo, "^[0-9]{9,15}$", R.string.err_account_no);
+        mAwesomeValidation.addValidation(this, R.id.accountNo, "^[0-9]{9,25}$", R.string.err_account_no);
+        mAwesomeValidation.addValidation(this, R.id.ifsc, "^[a-zA-z0-9]{9,20}$", R.string.err_name);
 
         state();
         relation();
@@ -134,7 +124,7 @@ public class WindsForm extends AppCompatActivity {
                             new DatePickerDialog.OnDateSetListener() {
                                 @Override
                                 public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                    dob.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                                    dob.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
                                 }
                             }, year, month, day);
                     datepicker.show();
@@ -154,7 +144,7 @@ public class WindsForm extends AppCompatActivity {
                     t8.getText().toString(), t9.getText().toString(), t10.getText().toString(), t11.getText().toString(),
                     t12.getText().toString(), t13.getText().toString(), t14.getText().toString(), t15.getText().toString(),
                     t16.getText().toString(), t17.getText().toString(), s1.getSelectedItem().toString(), s2.getSelectedItem().toString(),
-                    s3.getSelectedItem().toString(), s4.getSelectedItem().toString(), token.getString("token", ""));
+                    s3.getSelectedItem().toString(), s4.getSelectedItem().toString(), token.getString("token", ""), token.getString("user_type", ""));
             call.enqueue(new Callback() {
                 @Override
                 public void onResponse(Call call, Response response) {
@@ -166,8 +156,10 @@ public class WindsForm extends AppCompatActivity {
                             Intent main = new Intent(getBaseContext(), WindsUploads.class);
                             main.putExtra("customer_id", mwindform.getMessage());
                             startActivity(main);
-                            finish();
+                            //setResult(Activity.RESULT_OK); //add this
+                            //finish();
                         }else{
+                            progressDialog.dismiss();
                             Toast.makeText(getApplicationContext(),mwindform.getMessage(),Toast.LENGTH_LONG).show();
                         }
                     }
@@ -303,6 +295,34 @@ public class WindsForm extends AppCompatActivity {
                 break;
             case "Jammu and Kashmir":
                 distItem = new String[]{"Anantnag","Bandipore","Baramulla","Budgam","Doda","Ganderbal","Jammu","Kargil","Kathua","Kishtwar","Kulgam","Kupwara","Leh","Poonch","Pulwama","Rajouri","Ramban","Reasi","Samba","Shopian","Srinagar","Udhampur"};
+                distAdapter = new ArrayAdapter<String>(WindsForm.this, android.R.layout.simple_spinner_item, distItem);
+                distAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinner.setAdapter(distAdapter);
+                distAdapter.notifyDataSetChanged();
+                break;
+            case "Jharkhand":
+                distItem = new String[]{"Bokaro","Chatra","Deoghar","Dhanbad","Dumka","East Singhbhum","Garhwa","Giridih","Godda","Gumla","Hazaribag","Jamtara","Khunti","Koderma","Latehar","Lohardaga","Pakur","Palamu","Ramgarh","Ranchi","Sahibganj","Seraikela-Kharsawan","Simdega","West Singhbhum"};
+                distAdapter = new ArrayAdapter<String>(WindsForm.this, android.R.layout.simple_spinner_item, distItem);
+                distAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinner.setAdapter(distAdapter);
+                distAdapter.notifyDataSetChanged();
+                break;
+            case "Karnataka":
+                distItem = new String[]{"Bagalkot","Ballari (Bellary)","Belagavi (Belgaum)","Bengaluru (Bangalore) Rural","Bengaluru (Bangalore) Urban","Bidar","Chamarajanagar","Chikballapur","Chikkamagaluru (Chikmagalur)","Chitradurga","Dakshina Kannada","Davangere","Dharwad","Gadag","Hassan","Haveri","Kalaburagi (Gulbarga)","Kodagu","Kolar","Koppal","Mandya","Mysuru (Mysore)","Raichur","Ramanagara","Shivamogga (Shimoga)","Tumakuru (Tumkur)","Udupi","Uttara Kannada (Karwar)","Vijayapura (Bijapur)","Yadgir"};
+                distAdapter = new ArrayAdapter<String>(WindsForm.this, android.R.layout.simple_spinner_item, distItem);
+                distAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinner.setAdapter(distAdapter);
+                distAdapter.notifyDataSetChanged();
+                break;
+            case "Kerala":
+                distItem = new String[]{"Alappuzha","Ernakulam","Idukki","Kannur","Kasaragod","Kollam","Kottayam","Kozhikode","Malappuram","Palakkad","Pathanamthitta","Thiruvananthapuram","Thrissur","Wayanad"};
+                distAdapter = new ArrayAdapter<String>(WindsForm.this, android.R.layout.simple_spinner_item, distItem);
+                distAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinner.setAdapter(distAdapter);
+                distAdapter.notifyDataSetChanged();
+                break;
+            case "Madhya Pradesh":
+                distItem = new String[]{"Agar Malwa","Alirajpur","Anuppur","Ashoknagar","Balaghat","Barwani","Betul","Bhind","Bhopal","Burhanpur","Chhatarpur","Chhindwara","Damoh","Datia","Dewas","Dhar","Dindori","Guna","Gwalior","Harda","Hoshangabad","Indore","Jabalpur","Jhabua","Katni","Khandwa","Khargone","Mandla","Mandsaur","Morena","Narsinghpur","Neemuch","Panna","Raisen","Rajgarh","Ratlam","Rewa","Sagar","Satna","Sehore","Seoni","Shahdol","Shajapur","Sheopur","Shivpuri","Sidhi","Singrauli","Tikamgarh","Ujjain","Umaria","Vidisha"};
                 distAdapter = new ArrayAdapter<String>(WindsForm.this, android.R.layout.simple_spinner_item, distItem);
                 distAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinner.setAdapter(distAdapter);

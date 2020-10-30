@@ -1,6 +1,7 @@
 package com.instacloudhost.extremes;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.loader.content.CursorLoader;
 import okhttp3.MediaType;
@@ -11,10 +12,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -66,10 +69,10 @@ public class AddCustomer extends AppCompatActivity {
     private EditText customer_name, mobile, bn, upi, ac, crn;
     private TextView t1;
     private String extremes = "extremeStorage", image = "photo", mLastLocation, iCategory, custom;
-    private ImageView selfie_iamge,proof_image;
+    private ImageView selfie_iamge, proof_image;
     private Bitmap currentImage;
     private String cfu1 = "false", cfu2 = "false";
-    private Uri f_image,s_image;
+    private Uri f_image, s_image;
     private File photoFile, file1, file2;
     private LocationCallback locationCallback;
     private FusedLocationProviderClient client;
@@ -96,16 +99,16 @@ public class AddCustomer extends AppCompatActivity {
         c3 = (TextInputLayout) findViewById(R.id.ac_no);
         c4 = (TextInputLayout) findViewById(R.id.crn_no);
 
-        customer_name   = (EditText)findViewById(R.id.customerName);
-        mobile   = (EditText)findViewById(R.id.mobile);
-        bn   = (EditText)findViewById(R.id.bn_et);
-        upi   = (EditText)findViewById(R.id.upi_id_et);
-        ac   = (EditText)findViewById(R.id.ac_no_et);
-        crn   = (EditText)findViewById(R.id.crn_no_et);
+        customer_name = (EditText) findViewById(R.id.customerName);
+        mobile = (EditText) findViewById(R.id.mobile);
+        bn = (EditText) findViewById(R.id.bn_et);
+        upi = (EditText) findViewById(R.id.upi_id_et);
+        ac = (EditText) findViewById(R.id.ac_no_et);
+        crn = (EditText) findViewById(R.id.crn_no_et);
 
-        Button submit = (Button)findViewById(R.id.submit);
-        Button photo = (Button)findViewById(R.id.photo);
-        Button proof = (Button)findViewById(R.id.proof);
+        Button submit = (Button) findViewById(R.id.submit);
+        Button photo = (Button) findViewById(R.id.photo);
+        Button proof = (Button) findViewById(R.id.proof);
 
         selfie_iamge = (ImageView) findViewById(R.id.selfie_image);
         proof_image = (ImageView) findViewById(R.id.proof_image);
@@ -118,11 +121,12 @@ public class AddCustomer extends AppCompatActivity {
     }
 
     private void check_category_form(String cat) {
-        switch (cat){
+        switch (cat) {
             case "2":
             case "3":
             case "4":
             case "14":
+            case "15":
             case "5":
                 c1.setVisibility(View.VISIBLE);
                 c2.setVisibility(View.VISIBLE);
@@ -150,6 +154,7 @@ public class AddCustomer extends AppCompatActivity {
         MultipartBody.Part body2 = MultipartBody.Part.createFormData("proof", "image2.jpg", requestFile2);
 
         RequestBody tk = RequestBody.create(MediaType.parse("text/plain"), token.getString("token", ""));
+        RequestBody utype = RequestBody.create(MediaType.parse("text/plain"), token.getString("user_type", ""));
         RequestBody customer_name = RequestBody.create(MediaType.parse("text/plain"), cn);
         RequestBody mobile = RequestBody.create(MediaType.parse("text/plain"), mb);
         RequestBody location = RequestBody.create(MediaType.parse("text/plain"), "" + mLastLocation);
@@ -158,7 +163,7 @@ public class AddCustomer extends AppCompatActivity {
 
         Retrofit retrofit = RetrofitClient.getRetrofitClient();
         APIService apiservice = retrofit.create(APIService.class);
-        Call call = apiservice.addCustomer(tk, customer_name, mobile, location, category, customs, body, body2);
+        Call call = apiservice.addCustomer(tk, utype, customer_name, mobile, location, category, customs, body, body2);
         call.enqueue(new Callback() {
             @Override
             public void onResponse(Call call, Response response) {
@@ -173,6 +178,7 @@ public class AddCustomer extends AppCompatActivity {
                         startActivity(main);
                         finish();
                     } else {
+                        progressDialog.cancel();
                         Toast.makeText(getApplicationContext(), mstatus.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
@@ -200,20 +206,30 @@ public class AddCustomer extends AppCompatActivity {
     private void location() {
 
         LocationRequest request = new LocationRequest();
-        request.setInterval(180*1000);
+        request.setInterval(180 * 1000);
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         client = LocationServices.getFusedLocationProviderClient(this);
-        locationCallback = new LocationCallback(){
+        locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 Location location = locationResult.getLastLocation();
                 if (location != null) {
-                    mLastLocation = Double.valueOf(location.getLatitude()).toString()+","+Double.valueOf(location.getLongitude()).toString();
-                    Log.d("loc: ",mLastLocation);
+                    mLastLocation = Double.valueOf(location.getLatitude()).toString() + "," + Double.valueOf(location.getLongitude()).toString();
+                    Log.d("loc: ", mLastLocation);
                 }
             }
         };
-        client.requestLocationUpdates(request, locationCallback ,null);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        client.requestLocationUpdates(request, locationCallback, null);
     }
 
     private View.OnClickListener addCustomer = new View.OnClickListener() {
