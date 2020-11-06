@@ -24,6 +24,16 @@ public class DetailModel {
     private String btn2;
 
 
+    @SerializedName("btn1_detail")
+    @Expose
+    private String btn1_detail;
+
+
+    @SerializedName("btn2_detail")
+    @Expose
+    private String btn2_detail;
+
+
     @SerializedName("icon")
     @Expose
     private String icon;
@@ -92,5 +102,21 @@ public class DetailModel {
 
     public void setIcon(String icon) {
         this.icon = icon;
+    }
+
+    public String getBtn1_detail() {
+        return btn1_detail;
+    }
+
+    public void setBtn1_detail(String btn1_detail) {
+        this.btn1_detail = btn1_detail;
+    }
+
+    public String getBtn2_detail() {
+        return btn2_detail;
+    }
+
+    public void setBtn2_detail(String btn2_detail) {
+        this.btn2_detail = btn2_detail;
     }
 }

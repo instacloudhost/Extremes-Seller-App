@@ -1,10 +1,12 @@
 package com.instacloudhost.extremes.remote;
 
+import com.instacloudhost.extremes.model.CustomerButtonModel;
 import com.instacloudhost.extremes.model.DetailModel;
 import com.instacloudhost.extremes.model.MStatus;
 import com.instacloudhost.extremes.model.MWindForm;
 import com.instacloudhost.extremes.model.Mgraph;
 import com.instacloudhost.extremes.model.Mlogin;
+import com.instacloudhost.extremes.model.TestModel;
 
 import java.util.List;
 
@@ -66,6 +68,19 @@ public interface APIService {
     Call <List<DetailModel>> ListService(@Field("agent_id") String agentId,
                                          @Field("agent_type") String agentType,
                                          @Field("category") String category);
+
+    @POST("/api/view_customers_agent")
+    @FormUrlEncoded
+    Call <List<CustomerButtonModel>> ListCustomerButton(@Field("agent_id") String agentId,
+                                                        @Field("agent_type") String agentType,
+                                                        @Field("category") String category,
+                                                        @Field("title") String title);
+
+    @POST("/api/view_cust_test")
+    @FormUrlEncoded
+    Call <TestModel> Test(@Field("agent_id") String agentId,
+                          @Field("agent_type") String agentType,
+                          @Field("category") String category);
 
     @GET("/api/checkversion")
     Call <String> check_version();

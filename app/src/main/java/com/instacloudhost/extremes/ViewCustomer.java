@@ -3,28 +3,41 @@ package com.instacloudhost.extremes;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.webkit.WebView;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.GridView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.instacloudhost.extremes.activity.ViewCusDetails;
-import com.instacloudhost.extremes.webviews.CustomerWebView;
+import com.instacloudhost.extremes.adapter.CustomerButtonAdapter;
+import com.instacloudhost.extremes.model.CustomerButtonModel;
+import com.instacloudhost.extremes.pages.WindsPageActivity;
+import com.instacloudhost.extremes.remote.APIService;
+import com.instacloudhost.extremes.remote.RetrofitClient;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class ViewCustomer extends AppCompatActivity {
 
     private SharedPreferences token;
     private String extremes = "extremeStorage";
-    private GridView gridView;
-    private TextView textView;
+    private String tokenid, userType;
     private String tk;
+
+
+    // for buttons Recycler View
+    ArrayList<CustomerButtonModel> mCustomerButtonModel = new ArrayList<>();
+    private CustomerButtonAdapter mCustomerButtonAdapter;
+    private RecyclerView mCustomerButtonRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,60 +47,37 @@ public class ViewCustomer extends AppCompatActivity {
                 Context.MODE_PRIVATE);
         tk = token.getString("token", "");
 
-        String[] btnViews = {
-                "SmartLife Customers",
-                "Pinelabs Customers",
-                "Winds Customers",
-                "PhonePe Customers"
-        };
+        mCustomerButtonRecyclerView = (RecyclerView) findViewById(R.id.recycler_customer_button);
+        mCustomerButtonRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        getDetailResponse();
+    }
 
-        gridView = (GridView)findViewById(R.id.gridView);
-        textView = (TextView)findViewById(R.id.btn);
-        final ArrayAdapter adapter = new ArrayAdapter(this,
-                R.layout.customer_grid_layout, R.id.btn, btnViews);
+    private void getDetailResponse() {
+        Retrofit retrofit = RetrofitClient.getRetrofitClient();
+        APIService apiservice = retrofit.create(APIService.class);
+        Call call = apiservice.ListCustomerButton(token.getString("token", ""), token
+                .getString("agent_type", ""), token
+                .getString("category", ""), token
+                .getString("title", ""));
 
-        gridView.setAdapter(adapter);
-
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        call.enqueue(new Callback<List<CustomerButtonModel>>() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                // TODO Auto-generated method stub
-                loadWebView(adapter.getItemId(position));
+            public void onResponse(Call<List<CustomerButtonModel>> call, Response<List<CustomerButtonModel>> response) {
+                mCustomerButtonModel = new ArrayList<>(response.body());
+                mCustomerButtonAdapter = new CustomerButtonAdapter(ViewCustomer.this, mCustomerButtonModel);
+                mCustomerButtonRecyclerView.setAdapter(mCustomerButtonAdapter);
+            }
+
+            @Override
+            public void onFailure(Call<List<CustomerButtonModel>> call, Throwable t) {
+                Toast.makeText(ViewCustomer.this, "Failure" + t, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void loadWebView(Long id) {
-
-        switch (Long.toString(id)){
-            case "0":
-                webCustom("smartlife", "13");
-                break;
-            case "1":
-                webCustom("pinelabs", "12");
-                break;
-            case "2":
-                webCustom("winds", "0");
-                break;
-            case "3":
-                webCustom("phonePe", "14");
-                break;
-        }
+    public void clk_Test(View view) {
+        Intent intent = new Intent(ViewCustomer.this, WindsPageActivity.class);
+        startActivity(intent);
+        finish();
     }
-
-    private void webCustom(String str, String cat) {
-        Intent i = new Intent(ViewCustomer.this, CustomerWebView.class);
-        i.putExtra(CustomerWebView.WEBSITE_ADDRESS, "https://extremes.in/api/view_customer/");
-        i.putExtra(CustomerWebView.TOKEN, tk);
-        i.putExtra(CustomerWebView.CATEGORY, str);
-        i.putExtra(CustomerWebView.CAT, cat);
-        i.putExtra(CustomerWebView.USER_TYPE, token.getString("user_type", ""));
-        startActivity(i);
-    }
-
-    private void windsCustom() {
-        Intent i = new Intent(ViewCustomer.this, ViewCusDetails.class);
-        startActivity(i);
-    }
-
 }

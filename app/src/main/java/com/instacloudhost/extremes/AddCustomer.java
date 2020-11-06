@@ -49,9 +49,12 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.textfield.TextInputLayout;
 import com.instacloudhost.extremes.activity.FrontCameraActivity;
+import com.instacloudhost.extremes.adapter.DetailAdapter;
 import com.instacloudhost.extremes.model.MStatus;
 import com.instacloudhost.extremes.remote.APIService;
 import com.instacloudhost.extremes.remote.RetrofitClient;
+
+import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -76,6 +79,8 @@ public class AddCustomer extends AppCompatActivity {
     private File photoFile, file1, file2;
     private LocationCallback locationCallback;
     private FusedLocationProviderClient client;
+    private String btn_n1, btn_n2;
+    private String btn_n1_d, btn_n2_d;
 
     static final int CAPTURE_IMAGE_REQUEST = 1;
 
@@ -86,6 +91,11 @@ public class AddCustomer extends AppCompatActivity {
         iCategory = intent.getStringExtra("category");
         layout = intent.getStringExtra("layout");
         setTitle(intent.getStringExtra("title"));
+        btn_n1 = intent.getStringExtra("btn1");
+        btn_n2 = intent.getStringExtra("btn2");
+        btn_n1_d = intent.getStringExtra("btn1_d");
+        btn_n2_d = intent.getStringExtra("btn2_d");
+
 
         setContentView(R.layout.activity_add_customer);
 
@@ -108,8 +118,15 @@ public class AddCustomer extends AppCompatActivity {
         crn = (EditText) findViewById(R.id.crn_no_et);
 
         Button submit = (Button) findViewById(R.id.submit);
-        Button photo = (Button) findViewById(R.id.photo);
-        Button proof = (Button) findViewById(R.id.proof);
+        Button photo = (Button) findViewById(R.id.btn_n1);
+        Button proof = (Button) findViewById(R.id.btn_n2);
+        TextView txtn1 = (TextView) findViewById(R.id.txt_n1);
+        TextView txtn2 = (TextView) findViewById(R.id.txt_n2);
+
+        txtn1.setText(btn_n1_d);
+        txtn2.setText(btn_n2_d);
+        photo.setText(btn_n1);
+        proof.setText(btn_n2);
 
         selfie_iamge = (ImageView) findViewById(R.id.selfie_image);
         proof_image = (ImageView) findViewById(R.id.proof_image);

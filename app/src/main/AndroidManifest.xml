@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.instacloudhost.extremes">
-<!--    android:appComponentFactory="androidx.core.app.CoreComponentFactory"-->
+
+    <uses-feature android:name="android.hardware.camera" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
-
         android:hardwareAccelerated="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -17,18 +26,19 @@
         android:testOnly="false"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.ViewCusDetails"></activity>
+        <activity android:name=".pages.ButtonViewCustomerActivity"></activity>
+        <activity android:name=".pages.WindsPageActivity" />
+        <activity android:name=".activity.ViewCusDetails" />
         <activity
             android:name=".webviews.CustomerWebView"
-            android:parentActivityName=".DashBoard"
-            />
+            android:parentActivityName=".DashBoard" />
         <activity
             android:name=".sections.WindsUploads"
             android:screenOrientation="portrait" />
         <activity
             android:name=".sections.WindsForm"
-            android:parentActivityName=".DashBoard"
-            android:label="@string/title_activity_winds_form" />
+            android:label="@string/title_activity_winds_form"
+            android:parentActivityName=".DashBoard" />
         <activity
             android:name=".activity.FrontCameraActivity"
             android:label="@string/app_name"
@@ -105,15 +115,5 @@
             android:enabled="true"
             android:exported="false" />
     </application>
-
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
 </manifest>
