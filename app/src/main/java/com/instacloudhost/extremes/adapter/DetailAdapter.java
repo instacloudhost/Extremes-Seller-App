@@ -61,6 +61,8 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ViewHolder
                     intent.putExtra("title", detailModels.get(i).getName());
                     intent.putExtra("btn1", detailModels.get(i).getBtn1());
                     intent.putExtra("btn2", detailModels.get(i).getBtn2());
+                    intent.putExtra("btn1_d", detailModels.get(i).getBtn1_detail());
+                    intent.putExtra("btn2_d", detailModels.get(i).getBtn2_detail());
                     context.startActivity(intent);
                 }
             });
@@ -75,6 +77,8 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ViewHolder
                     intent.putExtra("title", detailModels.get(i).getName());
                     intent.putExtra("btn1", detailModels.get(i).getBtn1());
                     intent.putExtra("btn2", detailModels.get(i).getBtn2());
+                    intent.putExtra("btn1_d", detailModels.get(i).getBtn1_detail());
+                    intent.putExtra("btn2_d", detailModels.get(i).getBtn2_detail());
                     context.startActivity(intent);
                 }
             });
