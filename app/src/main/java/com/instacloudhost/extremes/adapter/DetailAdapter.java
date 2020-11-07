@@ -31,7 +31,7 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ViewHolder
         this.detailModels=detailModels;
         this.context=context;
     }
-
+// Adadpters for buttons on Home
     @NonNull
     @Override
     public DetailAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
