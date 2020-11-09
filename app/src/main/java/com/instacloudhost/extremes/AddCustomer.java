@@ -49,9 +49,12 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.textfield.TextInputLayout;
 import com.instacloudhost.extremes.activity.FrontCameraActivity;
+import com.instacloudhost.extremes.adapter.DetailAdapter;
 import com.instacloudhost.extremes.model.MStatus;
 import com.instacloudhost.extremes.remote.APIService;
 import com.instacloudhost.extremes.remote.RetrofitClient;
+
+import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -92,6 +95,7 @@ public class AddCustomer extends AppCompatActivity {
         btn_n2 = intent.getStringExtra("btn2");
         btn_n1_d = intent.getStringExtra("btn1_d");
         btn_n2_d = intent.getStringExtra("btn2_d");
+
         setContentView(R.layout.activity_add_customer);
 
         token = getSharedPreferences(extremes,

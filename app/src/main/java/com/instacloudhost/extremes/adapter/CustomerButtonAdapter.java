@@ -62,4 +62,3 @@ public class CustomerButtonAdapter extends RecyclerView.Adapter<CustomerButtonAd
         }
     }
 }
-

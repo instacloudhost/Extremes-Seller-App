@@ -3,14 +3,8 @@ package com.instacloudhost.extremes;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.webkit.WebView;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.GridView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.instacloudhost.extremes.activity.ViewCusDetails;
@@ -23,6 +17,7 @@ import com.instacloudhost.extremes.webviews.CustomerWebView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;

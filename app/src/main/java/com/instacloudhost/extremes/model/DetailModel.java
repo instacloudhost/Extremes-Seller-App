@@ -104,7 +104,6 @@ public class DetailModel {
         this.icon = icon;
     }
 
-
     public String getBtn1_detail() {
         return btn1_detail;
     }
@@ -120,4 +119,3 @@ public class DetailModel {
     public void setBtn2_detail(String btn2_detail) {
         this.btn2_detail = btn2_detail;
     }
-}

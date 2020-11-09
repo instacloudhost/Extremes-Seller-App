@@ -69,6 +69,19 @@ public interface APIService {
                                          @Field("agent_type") String agentType,
                                          @Field("category") String category);
 
+    @POST("/api/view_customers_agent")
+    @FormUrlEncoded
+    Call <List<CustomerButtonModel>> ListCustomerButton(@Field("agent_id") String agentId,
+                                                        @Field("agent_type") String agentType,
+                                                        @Field("category") String category,
+                                                        @Field("title") String title);
+
+    @POST("/api/view_cust_test")
+    @FormUrlEncoded
+    Call <TestModel> Test(@Field("agent_id") String agentId,
+                          @Field("agent_type") String agentType,
+                          @Field("category") String category);
+
     @GET("/api/checkversion")
     Call <String> check_version();
 

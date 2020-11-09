@@ -1,6 +1,7 @@
 package com.instacloudhost.extremes.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.instacloudhost.extremes.R;
+import com.instacloudhost.extremes.model.TestModel;
+import com.instacloudhost.extremes.pages.WindsPageActivity;
+import com.instacloudhost.extremes.sections.WindsForm;
 
 import java.util.ArrayList;
 
@@ -41,6 +45,8 @@ public class CustomerViewAdapter extends RecyclerView.Adapter<CustomerViewAdapte
         holder.name.setText(personNames.get(position));
         holder.email.setText(emailIds.get(position));
         holder.mobileNo.setText(mobileNumbers.get(position));
+
+
         // implement setOnClickListener event on item view.
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
