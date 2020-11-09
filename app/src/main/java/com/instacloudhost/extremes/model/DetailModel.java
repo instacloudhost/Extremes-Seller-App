@@ -119,4 +119,3 @@ public class DetailModel {
     public void setBtn2_detail(String btn2_detail) {
         this.btn2_detail = btn2_detail;
     }
-}

@@ -6,7 +6,7 @@ import com.instacloudhost.extremes.model.MStatus;
 import com.instacloudhost.extremes.model.MWindForm;
 import com.instacloudhost.extremes.model.Mgraph;
 import com.instacloudhost.extremes.model.Mlogin;
-import com.instacloudhost.extremes.model.TestModel;
+import com.instacloudhost.extremes.model.ViewModel;
 
 import java.util.List;
 
@@ -144,6 +144,21 @@ public interface APIService {
     /*
         Winds Files Upload
      */
+
+    @POST("/api/view_customers_agent")
+    @FormUrlEncoded
+    Call <List<CustomerButtonModel>> ListCustomerButton(@Field("agent_id") String agentId,
+                                                        @Field("agent_type") String agentType,
+                                                        @Field("category") String category,
+                                                        @Field("title") String title);
+
+
+    @POST("/api/view_cust_test")
+    @FormUrlEncoded
+    Call <ViewModel> View(@Field("agent_id") String agentId,
+                          @Field("agent_type") String agentType,
+                          @Field("category") String category);
+
     @POST("/api/windsuploadbyfield")
     @Multipart
     Call <MStatus> windsUploadByField(@Part("customer_id") RequestBody customerID,

@@ -96,7 +96,6 @@ public class AddCustomer extends AppCompatActivity {
         btn_n1_d = intent.getStringExtra("btn1_d");
         btn_n2_d = intent.getStringExtra("btn2_d");
 
-
         setContentView(R.layout.activity_add_customer);
 
         token = getSharedPreferences(extremes,

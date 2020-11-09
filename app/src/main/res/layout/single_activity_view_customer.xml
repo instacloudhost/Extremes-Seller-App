@@ -14,10 +14,11 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <Button
-            android:onClick="clk_Test"
+            android:onClick="clk_cust_view"
             android:id="@+id/txt_btn_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorWhite"
             android:backgroundTint="@color/colorAccent"
             android:text="@string/load"
             android:textAllCaps="false"/>

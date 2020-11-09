@@ -6,19 +6,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.instacloudhost.extremes.R;
 import com.instacloudhost.extremes.model.CustomerButtonModel;
-import com.instacloudhost.extremes.pages.WindsPageActivity;
-import com.instacloudhost.extremes.sections.WindsForm;
-
+import com.instacloudhost.extremes.pages.CustomersViewPageActivity;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class CustomerButtonAdapter extends RecyclerView.Adapter<CustomerButtonAdapter.ViewHolder>{
 
@@ -40,12 +36,12 @@ public class CustomerButtonAdapter extends RecyclerView.Adapter<CustomerButtonAd
     @Override
     public void onBindViewHolder(@NonNull CustomerButtonAdapter.ViewHolder viewHolder, int i) {
 
-            viewHolder.btn_title.setText(mCustomerButtonModel.get(i).getTitle());
+        viewHolder.btn_title.setText(mCustomerButtonModel.get(i).getTitle());
         viewHolder.btn_title.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, WindsPageActivity.class);
+                Intent intent = new Intent(context, CustomersViewPageActivity.class);
                 intent.putExtra("category", mCustomerButtonModel.get(i).getCategory());
                 context.startActivity(intent);
             }

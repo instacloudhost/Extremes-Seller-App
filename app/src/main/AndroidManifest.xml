@@ -26,8 +26,7 @@
         android:testOnly="false"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".pages.ButtonViewCustomerActivity"></activity>
-        <activity android:name=".pages.WindsPageActivity" />
+        <activity android:name=".pages.CustomersViewPageActivity"></activity>
         <activity android:name=".activity.ViewCusDetails" />
         <activity
             android:name=".webviews.CustomerWebView"

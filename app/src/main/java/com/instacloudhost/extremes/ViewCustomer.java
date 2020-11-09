@@ -7,15 +7,17 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.instacloudhost.extremes.activity.ViewCusDetails;
 import com.instacloudhost.extremes.adapter.CustomerButtonAdapter;
 import com.instacloudhost.extremes.model.CustomerButtonModel;
-import com.instacloudhost.extremes.pages.WindsPageActivity;
+import com.instacloudhost.extremes.pages.CustomersViewPageActivity;
 import com.instacloudhost.extremes.remote.APIService;
 import com.instacloudhost.extremes.remote.RetrofitClient;
+import com.instacloudhost.extremes.webviews.CustomerWebView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
+
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -75,8 +77,8 @@ public class ViewCustomer extends AppCompatActivity {
         });
     }
 
-    public void clk_Test(View view) {
-        Intent intent = new Intent(ViewCustomer.this, WindsPageActivity.class);
+    public void clk_cust_view(View view) {
+        Intent intent = new Intent(ViewCustomer.this, CustomersViewPageActivity.class);
         startActivity(intent);
         finish();
     }
